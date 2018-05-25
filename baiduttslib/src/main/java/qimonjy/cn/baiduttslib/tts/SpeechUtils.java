@@ -56,14 +56,16 @@ public class SpeechUtils {
 
     public void init(Context pContext) {
         mContext = pContext.getApplicationContext();
-        this.mainHandler = new Handler(mContext.getMainLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                if (msg.obj != null) Log.e("zeffect", "msg:" + msg.obj.toString());
-            }
-        };
-        initialTts();
+        if (synthesizer == null) {
+            this.mainHandler = new Handler(mContext.getMainLooper()) {
+                @Override
+                public void handleMessage(Message msg) {
+                    super.handleMessage(msg);
+                    if (msg.obj != null) Log.e("zeffect", "msg:" + msg.obj.toString());
+                }
+            };
+            initialTts();
+        }
     }
 
 
@@ -135,7 +137,8 @@ public class SpeechUtils {
         SpeechSynthesizerListener listener = new FileSaveListener(mainHandler, getDestDir(mContext), myLister);
         Map<String, String> params = getParams();
         InitConfig initConfig = new InitConfig(appId, appKey, secretKey, ttsMode, params, listener);
-        synthesizer = new NonBlockSyntherizer(mContext, initConfig, mainHandler);
+        if (synthesizer == null)
+            synthesizer = new NonBlockSyntherizer(mContext, initConfig, mainHandler);
     }
 
 
