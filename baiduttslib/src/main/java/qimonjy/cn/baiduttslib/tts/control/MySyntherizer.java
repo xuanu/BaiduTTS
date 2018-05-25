@@ -41,8 +41,7 @@ public class MySyntherizer implements MainHandlerConstant {
 
     protected MySyntherizer(Context context, Handler mainHandler) {
         if (isInitied) {
-            // SpeechSynthesizer.getInstance() 不要连续调用
-            throw new RuntimeException("MySynthesizer 类里面 SpeechSynthesizer还未释放，请勿新建一个新类");
+            return;
         }
         this.context = context;
         this.mainHandler = mainHandler;

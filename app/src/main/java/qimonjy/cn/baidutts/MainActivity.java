@@ -33,7 +33,22 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 String speakWord = mInput.getText().toString().trim();
                 if (TextUtils.isEmpty(speakWord)) return;
-                SpeechUtils.getInstance().speak(speakWord);
+                SpeechUtils.getInstance().speak(speakWord, new SpeechUtils.SyntherListerner() {
+                    @Override
+                    public void start(String uttid) {
+
+                    }
+
+                    @Override
+                    public void finish(String uttid, String filePath) {
+                        AudioTask.getInstance().play(filePath);
+                    }
+
+                    @Override
+                    public void error(String uttid) {
+
+                    }
+                });
             }
         });
         findViewById(R.id.saveSpeak).setOnClickListener(new View.OnClickListener() {

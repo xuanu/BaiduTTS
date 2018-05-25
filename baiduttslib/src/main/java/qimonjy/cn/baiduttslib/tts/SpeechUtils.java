@@ -67,14 +67,19 @@ public class SpeechUtils {
     }
 
 
-    public String speak(String word) {
+    public String speak(String word, SyntherListerner syntherListerner) {
         if (TextUtils.isEmpty(word)) return "";
         if (word.length() > 512) return "";
         String uttId = getUttid(word);
         File saveFile = makeSaveFile(getDestDir(mContext), uttId);
         if (saveFile.isDirectory()) saveFile.delete();
-        if (!saveFile.exists()) saveFile.getParentFile().mkdirs();
-        else return saveFile.getAbsolutePath();
+        if (!saveFile.exists()) {
+            saveFile.getParentFile().mkdirs();
+        } else {
+            if (syntherListerner != null)
+                syntherListerner.finish(uttId, saveFile.getAbsolutePath());
+            return saveFile.getAbsolutePath();
+        }
         int result = synthesizer.speak(word, uttId);
         return saveFile.getAbsolutePath();
     }
@@ -82,9 +87,6 @@ public class SpeechUtils {
 
     private List<WordSynther> wordSynthers = new ArrayList<>();
 
-    public String synther(String word) {
-        return synther(word, null);
-    }
 
     public String synther(String word, SyntherListerner syntherListerner) {
         if (TextUtils.isEmpty(word)) return "";
@@ -93,7 +95,11 @@ public class SpeechUtils {
         File saveFile = makeSaveFile(getDestDir(mContext), uttId);
         if (saveFile.isDirectory()) saveFile.delete();
         if (!saveFile.exists()) saveFile.getParentFile().mkdirs();
-        else return saveFile.getAbsolutePath();
+        else {
+            if (syntherListerner != null)
+                syntherListerner.finish(uttId, saveFile.getAbsolutePath());
+            return saveFile.getAbsolutePath();
+        }
         if (syntherListerner != null) {
             wordSynthers.add(new WordSynther().setWord(uttId).setSyntherListernerWeakReference(new WeakReference<SyntherListerner>(syntherListerner)));
         }
